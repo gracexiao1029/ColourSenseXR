@@ -5,6 +5,7 @@ using System.IO;
 using MathNet.Numerics.Providers.LinearAlgebra;
 using Unity.VisualScripting;
 using System;
+using Google.Protobuf.WellKnownTypes;
 
 /// <summary>
 /// Records real-time audio, converts to mel spectrogram (crude version),
@@ -28,7 +29,7 @@ public class EmotionAudioInput : MonoBehaviour
     private float smoothColorSpeed = 4f;
 
     private const int N_MELS = 64;
-    private const int TARGET_FRAMES = 1292; // matches model
+    private const int TARGET_FRAMES = 216; // matches model
 
     private string logPath = @"C:\Users\GRACE\Documents\Adjust Lens\Assets\Log\emotion_log.txt";
     private float timer = 0f;
@@ -77,7 +78,15 @@ public class EmotionAudioInput : MonoBehaviour
         }
 
         // Feed into Barracuda
-        using (var input = new Tensor(1, N_MELS, TARGET_FRAMES, 1, mel))
+        float[] mel5 = new float[5 * N_MELS * TARGET_FRAMES];
+
+        for (int i = 0; i < 5; i++)
+        {
+            Array.Copy(mel, 0, mel5, i * (N_MELS * TARGET_FRAMES), N_MELS * TARGET_FRAMES);
+        }
+
+        // Barracuda tensor dims = (N, H, W, C)
+        using (var input = new Tensor(5, 1, N_MELS, TARGET_FRAMES, mel5))
         {
             worker.Execute(input);
             using (var output = worker.PeekOutput())
@@ -91,6 +100,10 @@ public class EmotionAudioInput : MonoBehaviour
                     arousal = output[1];
                 }
 
+                // Normalize valence and arousal to 0–1
+                valence = (float)Mathf.Clamp01((valence - 1.5578f)); //(float)((float)1.0 / (1.0 + Math.Exp(-2.5 * (valence - 1.8))));
+                arousal = (float)Mathf.Clamp01((arousal - 1.61766f)); //(float)Math.Log10(1.0 + 9.0 * (arousal - 0.8928) / 1.2576);
+
                 timer += Time.deltaTime;
                 if (timer >= logInterval)
                 {
@@ -99,12 +112,11 @@ public class EmotionAudioInput : MonoBehaviour
                     {
                         string line = $"Valence: {valence} | Arousal: {arousal}\n";
                         File.AppendAllText(logPath, line);
+                        Debug.Log(line);
                     }
                 }
 
-                // Normalize valence and arousal to 0–1
-                valence = (float)((float)1.0 / (1.0 + Math.Exp(-2.5 * (valence - 1.8))));
-                arousal = (float)Math.Log10(1.0 + 9.0 * (arousal - 0.8928) / 1.2576);
+                
 
                 
                 Color targetColor = ValenceToGradientColor(valence);
