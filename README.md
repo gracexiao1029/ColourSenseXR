@@ -22,6 +22,8 @@ The `AudioInput` class captures microphone input and performs real-time frequenc
 
 ### Strategy 2: Emotion-Based Analysis
 
+Trained Model: https://github.com/gracexiao1029/Music2EmotionModel
+
 The `EmotionAudioInput` class uses machine learning to analyze emotional content in audio:
 
 - **Neural Network**: Employs Unity Barracuda to run an ONNX emotion recognition model
