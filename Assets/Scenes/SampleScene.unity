@@ -738,7 +738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &440219253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -752,7 +752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   passthrough: {fileID: 648611531}
-  emotionModelAsset: {fileID: 5022602860645237092, guid: 98a006d0ae2b44647a57f723fd9002a6, type: 3}
+  emotionModelAsset: {fileID: 5022602860645237092, guid: 882b46d21a4cd20409c5c2eda6574106, type: 3}
 --- !u!82 &440219254
 AudioSource:
   m_ObjectHideFlags: 0

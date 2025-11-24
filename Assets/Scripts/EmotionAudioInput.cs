@@ -101,8 +101,8 @@ public class EmotionAudioInput : MonoBehaviour
                 }
 
                 // Normalize valence and arousal to 0–1
-                valence = (float)Mathf.Clamp01((valence - 1.5578f)); //(float)((float)1.0 / (1.0 + Math.Exp(-2.5 * (valence - 1.8))));
-                arousal = (float)Mathf.Clamp01((arousal - 1.61766f)); //(float)Math.Log10(1.0 + 9.0 * (arousal - 0.8928) / 1.2576);
+                valence = (float)((float)1.0 / (1.0 + Math.Exp(-2.5 * (valence - 1.8))));
+                arousal = (float)Math.Log10(1.0 + 9.0 * (arousal - 0.8928) / 1.2576);
 
                 timer += Time.deltaTime;
                 if (timer >= logInterval)
